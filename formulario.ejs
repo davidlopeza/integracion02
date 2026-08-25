@@ -1,0 +1,10 @@
+<h1><%= titulo %></h1>
+
+<form class="formulario" method="POST" action="<%= accion %>">
+  <div class="campo">
+    <label for="nombre">Nombre</label>
+    <input type="text" id="nombre" name="nombre" required value="<%= genero.nombre || '' %>">
+  </div>
+  <button type="submit" class="boton boton-primario">Guardar</button>
+  <a class="boton" href="/generos">Cancelar</a>
+</form>

@@ -1,0 +1,26 @@
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <h1>Conceptos</h1>
+  <a class="boton boton-primario" href="/conceptos/nuevo">Nuevo concepto</a>
+</div>
+<p class="ayuda">Los conceptos se definen por libro (misma palabra, distinta definición según el libro). Aquí solo se administra el catálogo de nombres de concepto.</p>
+
+<table class="tabla">
+  <thead><tr><th>Nombre</th><th>Libros que lo definen</th><th>Acciones</th></tr></thead>
+  <tbody>
+    <% conceptos.forEach(function (c) { %>
+      <tr>
+        <td><%= c.nombre %></td>
+        <td><%= c.usos %></td>
+        <td class="acciones-tabla">
+          <a href="/conceptos/<%= c.id %>/editar">Editar</a>
+          <form method="POST" action="/conceptos/<%= c.id %>?_method=DELETE" class="form-en-linea" onsubmit="return confirm('¿Eliminar este concepto?');">
+            <button type="submit" class="boton boton-peligro">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+    <% if (conceptos.length === 0) { %>
+      <tr><td colspan="3">No hay conceptos registrados todavía.</td></tr>
+    <% } %>
+  </tbody>
+</table>

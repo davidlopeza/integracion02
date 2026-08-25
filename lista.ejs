@@ -1,0 +1,24 @@
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <h1>Géneros</h1>
+  <a class="boton boton-primario" href="/generos/nuevo">Nuevo género</a>
+</div>
+
+<table class="tabla">
+  <thead><tr><th>Nombre</th><th>Acciones</th></tr></thead>
+  <tbody>
+    <% generos.forEach(function (g) { %>
+      <tr>
+        <td><%= g.nombre %></td>
+        <td class="acciones-tabla">
+          <a href="/generos/<%= g.id %>/editar">Editar</a>
+          <form method="POST" action="/generos/<%= g.id %>?_method=DELETE" class="form-en-linea" onsubmit="return confirm('¿Eliminar este género?');">
+            <button type="submit" class="boton boton-peligro">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+    <% if (generos.length === 0) { %>
+      <tr><td colspan="2">No hay géneros registrados todavía.</td></tr>
+    <% } %>
+  </tbody>
+</table>

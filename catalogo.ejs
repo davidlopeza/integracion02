@@ -1,0 +1,74 @@
+<h1>Catálogo de libros</h1>
+
+<form class="filtros-catalogo" method="GET" action="/libros">
+  <div class="campo">
+    <label for="texto">Buscar</label>
+    <input type="text" id="texto" name="texto" placeholder="Título o autor" value="<%= filtros.texto || '' %>">
+  </div>
+  <div class="campo">
+    <label for="categoriaId">Categoría</label>
+    <select id="categoriaId" name="categoriaId">
+      <option value="">Todas</option>
+      <% categorias.forEach(function (c) { %>
+        <option value="<%= c.id %>" <%= String(filtros.categoriaId) === String(c.id) ? 'selected' : '' %>><%= c.nombre %></option>
+      <% }); %>
+    </select>
+  </div>
+  <div class="campo">
+    <label for="generoId">Género</label>
+    <select id="generoId" name="generoId">
+      <option value="">Todos</option>
+      <% generos.forEach(function (g) { %>
+        <option value="<%= g.id %>" <%= String(filtros.generoId) === String(g.id) ? 'selected' : '' %>><%= g.nombre %></option>
+      <% }); %>
+    </select>
+  </div>
+  <div class="campo">
+    <label for="formatoId">Formato</label>
+    <select id="formatoId" name="formatoId">
+      <option value="">Todos</option>
+      <% formatos.forEach(function (f) { %>
+        <option value="<%= f.id %>" <%= String(filtros.formatoId) === String(f.id) ? 'selected' : '' %>><%= f.nombre %></option>
+      <% }); %>
+    </select>
+  </div>
+  <div class="campo">
+    <button type="submit" class="boton boton-primario">Filtrar</button>
+  </div>
+</form>
+
+<p class="ayuda"><%= total %> libro(s) encontrado(s).</p>
+
+<% if (libros.length === 0) { %>
+  <p>No se encontraron libros con esos criterios.</p>
+<% } else { %>
+  <div class="grid-libros">
+    <% libros.forEach(function (libro) { %>
+      <a class="tarjeta tarjeta-libro" href="/libros/<%= encodeURIComponent(libro.isbn) %>">
+        <% if (libro.portada) { %>
+          <img src="<%= libro.portada %>" alt="Portada de <%= libro.titulo %>">
+        <% } else { %>
+          <div class="imagen-generica">Sin imagen</div>
+        <% } %>
+        <h3><%= libro.titulo %></h3>
+        <p class="ayuda"><%= libro.autores || 'Autor desconocido' %></p>
+        <p class="ayuda"><%= libro.categoria %> · <%= libro.formato %></p>
+        <p class="precio">$<%= Number(libro.precio).toFixed(2) %></p>
+      </a>
+    <% }); %>
+  </div>
+
+  <% if (totalPaginas > 1) { %>
+    <nav class="paginacion">
+      <% for (let p = 1; p <= totalPaginas; p++) { %>
+        <% const params = new URLSearchParams({ ...filtros, pagina: p }); %>
+        <% Object.keys(filtros).forEach(function(k){ if(!filtros[k]) params.delete(k); }); %>
+        <% if (p === pagina) { %>
+          <span class="activa"><%= p %></span>
+        <% } else { %>
+          <a href="/libros?<%= params.toString() %>"><%= p %></a>
+        <% } %>
+      <% } %>
+    </nav>
+  <% } %>
+<% } %>

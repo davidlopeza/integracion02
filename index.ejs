@@ -1,0 +1,25 @@
+<section class="tarjeta">
+  <h1>Bienvenido a la Librería en línea</h1>
+  <p>Explora nuestro catálogo de libros, con autores, géneros, formatos y conceptos clave definidos por cada título.</p>
+  <a class="boton boton-primario" href="/libros">Ver catálogo completo</a>
+</section>
+
+<h2>Novedades</h2>
+<% if (librosDestacados.length === 0) { %>
+  <p>Todavía no hay libros registrados en el catálogo.</p>
+<% } else { %>
+  <div class="grid-libros">
+    <% librosDestacados.forEach(function (libro) { %>
+      <a class="tarjeta tarjeta-libro" href="/libros/<%= encodeURIComponent(libro.isbn) %>">
+        <% if (libro.portada) { %>
+          <img src="<%= libro.portada %>" alt="Portada de <%= libro.titulo %>">
+        <% } else { %>
+          <div class="imagen-generica">Sin imagen</div>
+        <% } %>
+        <h3><%= libro.titulo %></h3>
+        <p class="ayuda"><%= libro.autores || 'Autor desconocido' %></p>
+        <p class="precio">$<%= Number(libro.precio).toFixed(2) %></p>
+      </a>
+    <% }); %>
+  </div>
+<% } %>

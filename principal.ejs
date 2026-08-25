@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof titulo !== 'undefined' ? titulo + ' · Librería en línea' : 'Librería en línea' %></title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="contenedor cabecera-interna">
+      <a class="marca" href="/">📚 Librería en línea</a>
+
+      <nav class="nav-principal">
+        <a href="/">Inicio</a>
+        <a href="/libros">Catálogo</a>
+        <% if (typeof usuarioActual !== 'undefined' && usuarioActual && usuarioActual.rol === 'administrador') { %>
+          <div class="menu-admin">
+            <span class="menu-admin-etiqueta">Administración ▾</span>
+            <div class="menu-admin-lista">
+              <a href="/libros/nuevo">Nuevo libro</a>
+              <a href="/autores">Autores</a>
+              <a href="/generos">Géneros</a>
+              <a href="/categorias">Categorías</a>
+              <a href="/formatos">Formatos</a>
+              <a href="/conceptos">Conceptos</a>
+              <a href="/usuarios">Usuarios</a>
+            </div>
+          </div>
+        <% } %>
+      </nav>
+
+      <div class="nav-usuario">
+        <% if (typeof usuarioActual !== 'undefined' && usuarioActual) { %>
+          <span class="saludo">Hola, <%= usuarioActual.nombre %><% if (usuarioActual.rol === 'administrador') { %> (admin)<% } %></span>
+          <form action="/auth/logout" method="POST" class="form-en-linea">
+            <button type="submit" class="boton boton-enlace">Cerrar sesión</button>
+          </form>
+        <% } else { %>
+          <a href="/auth/login">Iniciar sesión</a>
+          <a href="/auth/registro" class="boton boton-primario">Registrarse</a>
+        <% } %>
+      </div>
+    </div>
+  </header>
+
+  <main class="contenedor contenido-principal">
+    <% if (typeof mensajesExito !== 'undefined' && mensajesExito && mensajesExito.length) { %>
+      <% mensajesExito.forEach(function (m) { %>
+        <div class="aviso aviso-exito"><%= m %></div>
+      <% }); %>
+    <% } %>
+    <% if (typeof mensajesError !== 'undefined' && mensajesError && mensajesError.length) { %>
+      <% mensajesError.forEach(function (m) { %>
+        <div class="aviso aviso-error"><%= m %></div>
+      <% }); %>
+    <% } %>
+
+    <%- body %>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor">
+      <p>Librería en línea &mdash; aplicación monolítica Node.js + PostgreSQL (renderizado en servidor).</p>
+    </div>
+  </footer>
+</body>
+</html>

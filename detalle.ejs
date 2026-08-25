@@ -1,0 +1,58 @@
+<% const portada = libro.imagenes.find(function (i) { return i.es_portada; }) || libro.imagenes[0]; %>
+
+<div class="detalle-libro">
+  <div class="galeria-portada">
+    <% if (portada) { %>
+      <img src="<%= portada.ruta_archivo %>" alt="Portada de <%= libro.titulo %>">
+    <% } else { %>
+      <div class="imagen-generica" style="height:420px;">Sin imagen</div>
+    <% } %>
+    <% if (libro.imagenes.length > 1) { %>
+      <div class="galeria-miniaturas">
+        <% libro.imagenes.forEach(function (img) { %>
+          <img src="<%= img.ruta_archivo %>" alt="<%= img.texto_alt || libro.titulo %>">
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+
+  <div>
+    <h1><%= libro.titulo %></h1>
+    <p class="ayuda">ISBN: <%= libro.isbn %> · <%= libro.anio_publicacion %></p>
+    <p><strong>Autor(es):</strong> <%= libro.autores.map(function(a){return a.nombre;}).join(', ') || '—' %></p>
+
+    <p>
+      <% libro.generos.forEach(function (g) { %><span class="etiqueta"><%= g.nombre %></span><% }); %>
+      <span class="etiqueta"><%= libro.categoria %></span>
+      <span class="etiqueta"><%= libro.formato %></span>
+    </p>
+
+    <p class="precio" style="font-size:1.4rem;">$<%= Number(libro.precio).toFixed(2) %></p>
+    <p><%= libro.stock > 0 ? libro.stock + ' unidades en stock' : 'Agotado' %></p>
+
+    <% if (libro.descripcion) { %>
+      <p><%= libro.descripcion %></p>
+    <% } %>
+
+    <% if (typeof usuarioActual !== 'undefined' && usuarioActual && usuarioActual.rol === 'administrador') { %>
+      <div class="acciones-tabla" style="margin-top:1rem;">
+        <a class="boton" href="/libros/<%= encodeURIComponent(libro.isbn) %>/editar">Editar libro</a>
+        <form method="POST" action="/libros/<%= encodeURIComponent(libro.isbn) %>?_method=DELETE" class="form-en-linea" onsubmit="return confirm('¿Eliminar este libro? Esta acción no se puede deshacer.');">
+          <button type="submit" class="boton boton-peligro">Eliminar libro</button>
+        </form>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<% if (libro.conceptos.length > 0) { %>
+  <section class="tarjeta" style="margin-top:2rem;">
+    <h2>Conceptos clave definidos en este libro</h2>
+    <dl class="lista-conceptos">
+      <% libro.conceptos.forEach(function (c) { %>
+        <dt><%= c.nombre %></dt>
+        <dd><%= c.definicion %></dd>
+      <% }); %>
+    </dl>
+  </section>
+<% } %>

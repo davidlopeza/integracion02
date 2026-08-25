@@ -1,0 +1,37 @@
+<h1>Usuarios registrados</h1>
+
+<table class="tabla">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Correo</th>
+      <th>Rol</th>
+      <th>Estado</th>
+      <th>Registrado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% usuarios.forEach(function (u) { %>
+      <tr>
+        <td><%= u.nombre %></td>
+        <td><%= u.email %></td>
+        <td><%= u.rol %></td>
+        <td><%= u.activo ? 'Activo' : 'Inactivo' %></td>
+        <td><%= new Date(u.fecha_registro).toLocaleDateString('es-MX') %></td>
+        <td class="acciones-tabla">
+          <% if (u.rol !== 'administrador') { %>
+            <form method="POST" action="/usuarios/<%= u.id %>/activo?_method=PUT" class="form-en-linea">
+              <button type="submit" class="boton"><%= u.activo ? 'Desactivar' : 'Activar' %></button>
+            </form>
+            <form method="POST" action="/usuarios/<%= u.id %>?_method=DELETE" class="form-en-linea" onsubmit="return confirm('¿Eliminar este usuario?');">
+              <button type="submit" class="boton boton-peligro">Eliminar</button>
+            </form>
+          <% } else { %>
+            <span class="ayuda">Administrador único</span>
+          <% } %>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>

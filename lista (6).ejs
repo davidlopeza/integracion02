@@ -1,0 +1,25 @@
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <h1>Autores</h1>
+  <a class="boton boton-primario" href="/autores/nuevo">Nuevo autor</a>
+</div>
+
+<table class="tabla">
+  <thead><tr><th>Nombre</th><th>Biografía</th><th>Acciones</th></tr></thead>
+  <tbody>
+    <% autores.forEach(function (a) { %>
+      <tr>
+        <td><%= a.nombre %></td>
+        <td><%= a.biografia ? a.biografia.substring(0, 80) + (a.biografia.length > 80 ? '…' : '') : '—' %></td>
+        <td class="acciones-tabla">
+          <a href="/autores/<%= a.id %>/editar">Editar</a>
+          <form method="POST" action="/autores/<%= a.id %>?_method=DELETE" class="form-en-linea" onsubmit="return confirm('¿Eliminar este autor?');">
+            <button type="submit" class="boton boton-peligro">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+    <% if (autores.length === 0) { %>
+      <tr><td colspan="3">No hay autores registrados todavía.</td></tr>
+    <% } %>
+  </tbody>
+</table>

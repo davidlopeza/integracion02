@@ -1,0 +1,149 @@
+<h1><%= titulo %></h1>
+
+<form class="formulario" method="POST" action="<%= accion %>" enctype="multipart/form-data">
+  <div class="campo">
+    <label for="isbn">ISBN</label>
+    <input type="text" id="isbn" name="isbn" required value="<%= libro.isbn || '' %>" <%= esNuevo ? '' : 'readonly' %>>
+    <% if (!esNuevo) { %><p class="ayuda">El ISBN no se puede modificar una vez creado el libro.</p><% } %>
+  </div>
+
+  <div class="campo">
+    <label for="titulo">Título</label>
+    <input type="text" id="titulo" name="titulo" required value="<%= libro.titulo || '' %>">
+  </div>
+
+  <div class="campo">
+    <label for="anioPublicacion">Año de publicación</label>
+    <input type="number" id="anioPublicacion" name="anioPublicacion" min="1450" max="2100" required value="<%= libro.anio_publicacion || libro.anioPublicacion || '' %>">
+  </div>
+
+  <div class="campo">
+    <label for="precio">Precio (MXN)</label>
+    <input type="number" id="precio" name="precio" min="0" step="0.01" required value="<%= libro.precio || '' %>">
+  </div>
+
+  <div class="campo">
+    <label for="stock">Stock</label>
+    <input type="number" id="stock" name="stock" min="0" step="1" required value="<%= libro.stock || 0 %>">
+  </div>
+
+  <div class="campo">
+    <label for="formatoId">Formato</label>
+    <select id="formatoId" name="formatoId" required>
+      <option value="">Selecciona un formato</option>
+      <% formatos.forEach(function (f) { %>
+        <option value="<%= f.id %>" <%= String(libro.formato_id || libro.formatoId) === String(f.id) ? 'selected' : '' %>><%= f.nombre %></option>
+      <% }); %>
+    </select>
+  </div>
+
+  <div class="campo">
+    <label for="categoriaId">Categoría</label>
+    <select id="categoriaId" name="categoriaId" required>
+      <option value="">Selecciona una categoría</option>
+      <% categorias.forEach(function (c) { %>
+        <option value="<%= c.id %>" <%= String(libro.categoria_id || libro.categoriaId) === String(c.id) ? 'selected' : '' %>><%= c.nombre %></option>
+      <% }); %>
+    </select>
+  </div>
+
+  <div class="campo">
+    <label for="descripcion">Descripción (opcional)</label>
+    <textarea id="descripcion" name="descripcion"><%= libro.descripcion || '' %></textarea>
+  </div>
+
+  <div class="campo">
+    <label>Autores</label>
+    <div class="grupo-checkboxes">
+      <% autores.forEach(function (a) { %>
+        <label>
+          <input type="checkbox" name="autorIds" value="<%= a.id %>" <%= seleccion.autorIds.map(String).includes(String(a.id)) ? 'checked' : '' %>>
+          <%= a.nombre %>
+        </label>
+      <% }); %>
+      <% if (autores.length === 0) { %><p class="ayuda">No hay autores registrados. <a href="/autores/nuevo" target="_blank">Crear uno</a>.</p><% } %>
+    </div>
+  </div>
+
+  <div class="campo">
+    <label>Géneros</label>
+    <div class="grupo-checkboxes">
+      <% generos.forEach(function (g) { %>
+        <label>
+          <input type="checkbox" name="generoIds" value="<%= g.id %>" <%= seleccion.generoIds.map(String).includes(String(g.id)) ? 'checked' : '' %>>
+          <%= g.nombre %>
+        </label>
+      <% }); %>
+      <% if (generos.length === 0) { %><p class="ayuda">No hay géneros registrados. <a href="/generos/nuevo" target="_blank">Crear uno</a>.</p><% } %>
+    </div>
+  </div>
+
+  <div class="campo">
+    <label>Conceptos definidos en este libro</label>
+    <p class="ayuda">Escribe el nombre del concepto y su definición tal como aplica en este libro. Si el concepto ya existe en el catálogo se reutiliza; si no, se crea automáticamente.</p>
+    <datalist id="lista-conceptos-existentes">
+      <% conceptos.forEach(function (c) { %><option value="<%= c.nombre %>"></option><% }); %>
+    </datalist>
+
+    <div id="filas-conceptos">
+      <% const conceptosIniciales = seleccion.conceptos.length ? seleccion.conceptos : [{ nombre: '', definicion: '' }]; %>
+      <% conceptosIniciales.forEach(function (c) { %>
+        <div class="fila-concepto">
+          <input type="text" name="conceptoNombre" list="lista-conceptos-existentes" placeholder="Concepto" value="<%= c.nombre || '' %>">
+          <input type="text" name="conceptoDefinicion" placeholder="Definición en este libro" value="<%= c.definicion || '' %>">
+          <button type="button" class="boton boton-peligro" onclick="this.closest('.fila-concepto').remove()">Quitar</button>
+        </div>
+      <% }); %>
+    </div>
+    <button type="button" class="boton" id="boton-agregar-concepto">+ Agregar concepto</button>
+  </div>
+
+  <div class="campo">
+    <label for="imagenes">Agregar imágenes</label>
+    <input type="file" id="imagenes" name="imagenes" accept="image/png,image/jpeg,image/webp,image/gif" multiple>
+    <p class="ayuda">Puedes subir varias imágenes (JPG, PNG, WEBP o GIF). La primera imagen se marca como portada si el libro aún no tiene una.</p>
+  </div>
+
+  <button type="submit" class="boton boton-primario">Guardar libro</button>
+  <a class="boton" href="/libros">Cancelar</a>
+</form>
+
+<% if (!esNuevo && libro.imagenes && libro.imagenes.length > 0) { %>
+  <section class="tarjeta" style="margin-top:1.5rem; max-width:720px;">
+    <h2>Imágenes actuales</h2>
+    <div class="grid-libros">
+      <% libro.imagenes.forEach(function (img) { %>
+        <div class="tarjeta-libro">
+          <img src="<%= img.ruta_archivo %>" alt="<%= img.texto_alt || '' %>">
+          <p class="ayuda"><%= img.es_portada ? 'Portada actual' : '' %></p>
+          <div class="acciones-tabla">
+            <% if (!img.es_portada) { %>
+              <form method="POST" action="/libros/<%= encodeURIComponent(libro.isbn) %>/imagenes/<%= img.id %>/portada?_method=PUT" class="form-en-linea">
+                <button type="submit" class="boton">Hacer portada</button>
+              </form>
+            <% } %>
+            <form method="POST" action="/libros/<%= encodeURIComponent(libro.isbn) %>/imagenes/<%= img.id %>?_method=DELETE" class="form-en-linea" onsubmit="return confirm('¿Eliminar esta imagen?');">
+              <button type="submit" class="boton boton-peligro">Eliminar</button>
+            </form>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </section>
+<% } %>
+
+<script>
+  // Permite agregar filas de concepto/definición dinámicamente en el
+  // navegador. Es un simple manejo del DOM: el formulario sigue
+  // enviándose como multipart/form-data clásico, sin JSON de por medio.
+  document.getElementById('boton-agregar-concepto').addEventListener('click', function () {
+    var contenedor = document.getElementById('filas-conceptos');
+    var fila = document.createElement('div');
+    fila.className = 'fila-concepto';
+    fila.innerHTML =
+      '<input type="text" name="conceptoNombre" list="lista-conceptos-existentes" placeholder="Concepto">' +
+      '<input type="text" name="conceptoDefinicion" placeholder="Definición en este libro">' +
+      '<button type="button" class="boton boton-peligro" onclick="this.closest(\'.fila-concepto\').remove()">Quitar</button>';
+    contenedor.appendChild(fila);
+  });
+</script>

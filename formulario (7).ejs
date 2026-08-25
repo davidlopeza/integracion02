@@ -1,0 +1,14 @@
+<h1><%= titulo %></h1>
+
+<form class="formulario" method="POST" action="<%= accion %>">
+  <div class="campo">
+    <label for="nombre">Nombre</label>
+    <input type="text" id="nombre" name="nombre" required value="<%= autor.nombre || '' %>">
+  </div>
+  <div class="campo">
+    <label for="biografia">Biografía (opcional)</label>
+    <textarea id="biografia" name="biografia"><%= autor.biografia || '' %></textarea>
+  </div>
+  <button type="submit" class="boton boton-primario">Guardar</button>
+  <a class="boton" href="/autores">Cancelar</a>
+</form>

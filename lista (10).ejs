@@ -1,0 +1,24 @@
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <h1>Formatos</h1>
+  <a class="boton boton-primario" href="/formatos/nuevo">Nuevo formato</a>
+</div>
+
+<table class="tabla">
+  <thead><tr><th>Nombre</th><th>Acciones</th></tr></thead>
+  <tbody>
+    <% formatos.forEach(function (f) { %>
+      <tr>
+        <td><%= f.nombre %></td>
+        <td class="acciones-tabla">
+          <a href="/formatos/<%= f.id %>/editar">Editar</a>
+          <form method="POST" action="/formatos/<%= f.id %>?_method=DELETE" class="form-en-linea" onsubmit="return confirm('¿Eliminar este formato?');">
+            <button type="submit" class="boton boton-peligro">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+    <% if (formatos.length === 0) { %>
+      <tr><td colspan="2">No hay formatos registrados todavía.</td></tr>
+    <% } %>
+  </tbody>
+</table>

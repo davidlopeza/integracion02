@@ -1,0 +1,8 @@
+<div class="tarjeta" style="text-align:center;">
+  <h1>Ocurrió un error</h1>
+  <p>Algo salió mal al procesar tu solicitud. Intenta de nuevo en unos momentos.</p>
+  <% if (typeof mensaje !== 'undefined' && mensaje) { %>
+    <pre style="text-align:left; background:#f2ece2; padding:1rem; border-radius:8px; overflow-x:auto;"><%= mensaje %></pre>
+  <% } %>
+  <a class="boton boton-primario" href="/">Volver al inicio</a>
+</div>

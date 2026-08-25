@@ -1,0 +1,24 @@
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <h1>Categorías</h1>
+  <a class="boton boton-primario" href="/categorias/nuevo">Nueva categoría</a>
+</div>
+
+<table class="tabla">
+  <thead><tr><th>Nombre</th><th>Acciones</th></tr></thead>
+  <tbody>
+    <% categorias.forEach(function (c) { %>
+      <tr>
+        <td><%= c.nombre %></td>
+        <td class="acciones-tabla">
+          <a href="/categorias/<%= c.id %>/editar">Editar</a>
+          <form method="POST" action="/categorias/<%= c.id %>?_method=DELETE" class="form-en-linea" onsubmit="return confirm('¿Eliminar esta categoría?');">
+            <button type="submit" class="boton boton-peligro">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+    <% if (categorias.length === 0) { %>
+      <tr><td colspan="2">No hay categorías registradas todavía.</td></tr>
+    <% } %>
+  </tbody>
+</table>
